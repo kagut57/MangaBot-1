@@ -18,6 +18,7 @@ class ChapterFile(SQLModel, table=True):
     file_unique_id: Optional[str]
     cbz_id: Optional[str]
     cbz_unique_id: Optional[str]
+    #telegraph_url: Optional[str]
 
 class MangaOutput(SQLModel, table=True):
     user_id: str = Field(primary_key=True, regex=r'\d+')
