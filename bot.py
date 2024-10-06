@@ -415,7 +415,7 @@ async def send_manga_chapter(client: Client, chapter, chat_id):
             return await client.send_message(chat_id,
                                           f'There was an error parsing this chapter or chapter is missing' +
                                           f', please check the chapter at the web\n\n{error_caption}')
-        thumb_path = "photo_6273770244254317830_x.jpg"
+        thumb_path = "Manga GALAXY_20241006_000059_0000.png"
 
     chapter_file = chapter_file or ChapterFile(url=chapter.url)
 
