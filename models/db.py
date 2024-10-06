@@ -16,7 +16,7 @@ class ChapterFile(SQLModel, table=True):
     url: str = Field(primary_key=True)
     file_id: Optional[str]
     file_unique_id: Optional[str]
-    cbz_id:str
+    cbz_id: option[str]
 
 
 class MangaOutput(SQLModel, table=True):
