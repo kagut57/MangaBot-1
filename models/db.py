@@ -16,8 +16,8 @@ class ChapterFile(SQLModel, table=True):
     url: str = Field(primary_key=True)
     file_id: Optional[str]
     file_unique_id: Optional[str]
-    cbz_id: option[str]
-
+    cbz_id: Optional[str]
+    cbz_unique_id: Optional[str]
 
 class MangaOutput(SQLModel, table=True):
     user_id: str = Field(primary_key=True, regex=r'\d+')
