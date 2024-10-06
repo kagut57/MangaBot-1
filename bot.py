@@ -419,8 +419,6 @@ async def send_manga_chapter(client: Client, chapter, chat_id):
 
     chapter_file = chapter_file or ChapterFile(url=chapter.url)
 
-    #success_caption += f'[Read on website]({chapter.get_url()})'
-
     if env_vars["FNAME"]:
         try:
             try: chap_num = re.search(r"Vol (\d+(?:\.\d+)?) Chapter (\d+(?:\.\d+)?)", chapter.name).group(2)
@@ -471,6 +469,15 @@ async def send_manga_chapter(client: Client, chapter, chat_id):
     else:
         media_docs[-1].caption = success_caption
         messages: list[Message] = await retry_on_flood(client.send_media_group)(chat_id, media_docs)
+
+    channel = env_vars.get('CACHE_CHANNEL')
+
+    for msg in messages:
+        if msg.media:
+            await client.send_media_group(channel, [msg])
+        else:
+            await client.send_message(channel, msg.text, reply_to_message_id=msg.message_id)
+        await asyncio.sleep(1)
 
     # Save file ids
     if download and media_docs:
@@ -708,12 +715,10 @@ async def chapter_creation(worker_id: int = 0):
     """
     logger.debug(f"Worker {worker_id}: Starting worker")
     while True:
-        channel = env_vars.get('CACHE_CHANNEL')
         chapter, chat_id = await pdf_queue.get(worker_id)
         logger.debug(f"Worker {worker_id}: Got chapter '{chapter.name}' from queue for user '{chat_id}'")
         try:
             await send_manga_chapter(bot, chapter, chat_id)
-            await send_manga_chapter(bot, chapter, channel)
         except:
             logger.exception(f"Error sending chapter {chapter.name} to user {chat_id}")
         finally:
