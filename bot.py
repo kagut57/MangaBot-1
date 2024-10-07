@@ -473,12 +473,10 @@ async def send_manga_chapter(client: Client, chapter, chat_id):
     channel = env_vars.get('CACHE_CHANNEL')
 
     for msg in messages:
-        if msg.media:
-            await client.send_media_group(channel, [msg])
-        else:
-            await client.send_message(channel, msg.text, reply_to_message_id=msg.message_id)
-        await asyncio.sleep(1)
-
+        if msg:
+            await msg.copy(channel)
+            await asyncio.sleep(1)
+            
     # Save file ids
     if download and media_docs:
         for message in [x for x in messages if x.document]:
