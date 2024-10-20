@@ -470,6 +470,12 @@ async def send_manga_chapter(client: Client, chapter, chat_id):
     else:
         media_docs[-1].caption = success_caption
         messages: list[Message] = await retry_on_flood(client.send_media_group)(chat_id, media_docs)
+        
+    channel = env_vars.get('CACHE_CHANNEL')
+    if message:
+        for msg in message:
+            await msg.copy(channel)
+            asyncio.sleep(1)
 
     # Save file ids
     if download and media_docs:
@@ -707,12 +713,10 @@ async def chapter_creation(worker_id: int = 0):
     """
     logger.debug(f"Worker {worker_id}: Starting worker")
     while True:
-        channel = env_vars.get('CACHE_CHANNEL')
         chapter, chat_id = await pdf_queue.get(worker_id)
         logger.debug(f"Worker {worker_id}: Got chapter '{chapter.name}' from queue for user '{chat_id}'")
         try:
             await send_manga_chapter(bot, chapter, chat_id)
-            await send_manga_chapter(bot, chapter, channel)
         except:
             logger.exception(f"Error sending chapter {chapter.name} to user {chat_id}")
         finally:
