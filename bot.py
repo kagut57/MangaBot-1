@@ -220,7 +220,7 @@ async def on_subs(client: Client, message: Message):
     subs = await db.get_subs(str(message.from_user.id), filter_list)
 
     lines = []
-    for sub in subs[:10]:
+    for sub in subs:
         lines.append(f'<a href="{sub.url}">{sub.name}</a>')
         lines.append(f'`/cancel {sub.url}`')
         lines.append('')
@@ -231,8 +231,21 @@ async def on_subs(client: Client, message: Message):
         return await message.reply("You have no subscriptions yet.")
 
     text = "\n".join(lines)
-    await message.reply(f'Your subscriptions:\n\n{text}\nTo see more subscriptions use `/subs filter`', disable_web_page_preview=True)
 
+    if len(text) > 4000:
+        with open("subscriptions.txt", "w") as f:
+            f.write(text)
+        await client.send_document(
+            message.chat.id, 
+            "subscriptions.txt", 
+            caption="Your subscriptions\nTo see more subscriptions use `/subs filter`'"
+        )
+        os.remove("subscriptions.txt")
+    else:
+        await message.reply(
+            f'Your subscriptions:\n\n{text}\nTo see more subscriptions use `/subs filter`',
+            disable_web_page_preview=True
+        )
 
 @bot.on_message(filters=filters.regex(r'^/cancel ([^ ]+)$'))
 async def on_cancel_command(client: Client, message: Message):
