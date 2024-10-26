@@ -261,7 +261,8 @@ async def on_unknown_command(client: Client, message: Message):
 @bot.on_message(filters=filters.text)
 async def on_message(client, message: Message):
     user_id = message.from_user.id
-    if not user_id in SUDOS:
+    SUDOS = env_vars.get('SUDOS', [])
+    if SUDOS and user_id not in SUDOS:
         return
     language_query[f"lang_None_{hash(message.text)}"] = (None, message.text)
     for language in plugin_dicts.keys():
