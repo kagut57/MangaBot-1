@@ -1,5 +1,5 @@
 aiohttp~=3.9.0
-Pyrogram
+pyrofork==2.3.38
 beautifulsoup4~=4.8.0
 requests
 Pillow~=10.1.0
