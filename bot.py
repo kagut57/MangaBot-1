@@ -444,7 +444,7 @@ async def send_manga_chapter(client: Client, chapter, chat_id):
             chap_num_match = re.search(r"Vol (\d+(?:\.\d+)?) Chapter (\d+(?:\.\d+)?)", chapter.name)
             chap_num = chap_num_match.group(2) if chap_num_match else re.search(r"(\d+(?:\.\d+)?)", chapter.name).group(1)
 
-            ch_name = env_vars["FNAME"].replace("{chap_num}", str(chap_num)).replace("{chap_name}", chapter.name)
+            ch_name = env_vars["FNAME"].replace("{chap_num}", str(chap_num)).replace("{chap_name}", chapter.manga.name)
             
             success_caption = f"<blockquote>{ch_name}.pdf</blockquote>"
 
@@ -496,7 +496,7 @@ async def send_manga_chapter(client: Client, chapter, chat_id):
     if len(media_docs) == 0:
         messages = await retry_on_flood(client.send_message)(chat_id, success_caption)
     else:
-        media_docs[0].caption = success_caption
+        media_docs[-1].caption = success_caption
         messages = await retry_on_flood(client.send_media_group)(chat_id, media_docs)
 
     channel = env_vars.get('CACHE_CHANNEL')
