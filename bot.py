@@ -433,7 +433,10 @@ async def send_manga_chapter(client: Client, chapter, chat_id):
                 f'There was an error parsing this chapter or chapter is missing. '
                 f'Please check the chapter at the web\n\n{error_caption}'
             )
-        thumb_path = env_vars.get("THUMB", fld2thumb(pictures_folder))
+        thumb_path = env_vars.get("THUMB") or fld2thumb(pictures_folder)
+        if not thumb_path:
+            thumb_path = None
+
 
     chapter_file = chapter_file or ChapterFile(url=chapter.url)
 
