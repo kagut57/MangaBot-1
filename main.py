@@ -1,5 +1,5 @@
 import asyncio as aio
-from bot import *
+from bot import bot, DB, manga_updater, chapter_creation
 
 
 async def async_main():
