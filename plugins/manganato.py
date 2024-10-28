@@ -14,8 +14,8 @@ class ManganatoClient(MangaClient):
     base_url = urlparse("https://manganato.com/")
     search_url = urljoin(base_url.geturl(), 'getstorysearchjson')
     search_param = 'searchword'
-    read_url = 'https://readmanganato.com/'
-    chap_url = 'https://chapmanganato.com/'
+    read_url = 'https://readmanganato.to/'
+    chap_url = 'https://chapmanganato.to/'
 
     pre_headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:97.0) Gecko/20100101 Firefox/97.0'
@@ -88,7 +88,7 @@ class ManganatoClient(MangaClient):
         return images_url
 
     async def get_picture(self, manga_chapter: MangaChapter, url, *args, **kwargs):
-        pattern = re.compile(r'(.*\.com/)')
+        pattern = re.compile(r'(.*\.(to|com)/)')
         match = re.match(pattern, manga_chapter.url)
         referer = match.group(1)
 
@@ -131,14 +131,14 @@ class ManganatoClient(MangaClient):
     async def contains_url(self, url: str):
         return url.startswith(self.read_url) or url.startswith(self.base_url.geturl()) or url.startswith(self.chap_url)
 
-    async def check_updated_urls(self, last_chapters: List[LastChapter]):
+    async def check_updated_urls(self, last_chapters):
 
         content = await self.get_url(self.base_url.geturl())
 
         updates = self.updates_from_page(content)
 
-        updated = [lc.url for lc in last_chapters if updates.get(lc.url) and updates.get(lc.url) != lc.chapter_url]
-        not_updated = [lc.url for lc in last_chapters if not updates.get(lc.url)
-                       or updates.get(lc.url) == lc.chapter_url]
+        updated = [lc["url"] for lc in last_chapters if updates.get(lc["url"]) and updates.get(lc["url"]) != lc["chapter_url"]]
+        not_updated = [lc["url"] for lc in last_chapters if not updates.get(lc["url"])
+                       or updates.get(lc["url"]) == lc["chapter_url"]]
 
         return updated, not_updated
