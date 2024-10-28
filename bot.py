@@ -135,6 +135,10 @@ async def on_chat_or_channel_message(client: Client, message: Message):
 @bot.on_message()
 async def on_private_message(client: Client, message: Message):
     channel = env_vars.get('CHANNEL')
+    user_id = message.from_user.id
+    SUDOS = env_vars.get('SUDOS', [])
+    if SUDOS and user_id not in SUDOS:
+        return message.stop_propagation()
     if not channel:
         return message.continue_propagation()
     try:
@@ -270,10 +274,6 @@ async def on_unknown_command(client: Client, message: Message):
 
 @bot.on_message(filters=filters.text)
 async def on_message(client, message: Message):
-    user_id = message.from_user.id
-    SUDOS = env_vars.get('SUDOS', [])
-    if SUDOS and user_id not in SUDOS:
-        return
     language_query[f"lang_None_{hash(message.text)}"] = (None, message.text)
     for language in plugin_dicts.keys():
         language_query[f"lang_{language}_{hash(message.text)}"] = (language, message.text)
