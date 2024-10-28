@@ -3,9 +3,9 @@ from abc import abstractmethod, ABC
 from dataclasses import dataclass
 from typing import List, AsyncIterable
 
+import asyncio
 from aiohttp import ClientSession
 from pathlib import Path
-
 from models import LastChapter
 from tools import LanguageSingleton
 
@@ -95,15 +95,12 @@ class MangaClient(ClientSession, metaclass=LanguageSingleton):
     async def set_pictures(self, manga_chapter: MangaChapter):
         requests_url = manga_chapter.url
 
-        # Set manga url as the referer if there is one
         headers = {**self.headers}
         if manga_chapter.manga:
             headers['referer'] = manga_chapter.manga.url
 
         response = await self.get(requests_url, headers=headers)
-
         content = await response.read()
-
         manga_chapter.pictures = await self.pictures_from_chapters(content, response)
 
         return manga_chapter
@@ -113,20 +110,29 @@ class MangaClient(ClientSession, metaclass=LanguageSingleton):
             await self.set_pictures(manga_chapter)
 
         folder_name = f'{clean(manga_chapter.manga.name)}/{clean(manga_chapter.name)}'
-        i = 0
-        for picture in manga_chapter.pictures:
-            ext = picture.split('.')[-1].split('?')[0].lower()
-            file_name = f'{folder_name}/{format(i, "05d")}.{ext}'
-            for _ in range(3):
-                req = await self.get_picture(manga_chapter, picture, file_name=file_name, cache=True,
-                                             req_content=False)
-                if str(req.status).startswith('2'):
-                    break
-            else:
-                raise ValueError
-            i += 1
+        tasks = [
+            self.download_picture(manga_chapter, picture, i, folder_name)
+            for i, picture in enumerate(manga_chapter.pictures)
+        ]
+
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+        
+        for result in results:
+            if isinstance(result, Exception):
+                raise ValueError(f"Error downloading pictures: {result}")
 
         return Path(f'cache/{manga_chapter.client.name}') / folder_name
+
+    async def download_picture(self, manga_chapter, picture, index, folder_name):
+        ext = picture.split('.')[-1].split('?')[0].lower()
+        file_name = f'{folder_name}/{format(index, "05d")}.{ext}'
+
+        req = await self.get_picture(
+            manga_chapter, picture, file_name=file_name, cache=True, req_content=False
+        )
+
+        if not str(req.status).startswith('2'):
+            raise ValueError(f"Failed to download picture: {picture}")
 
     async def get_picture(self, manga_chapter: MangaChapter, url, *args, **kwargs):
         return await self.get_url(url, *args, **kwargs)
