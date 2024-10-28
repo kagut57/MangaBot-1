@@ -137,9 +137,6 @@ async def on_private_message(client: Client, message: Message):
     channel = env_vars.get('CHANNEL')
     if not channel:
         return message.continue_propagation()
-    if in_channel_cached := users_in_channel.get(message.from_user.id):
-        if dt.datetime.now() - in_channel_cached < dt.timedelta(days=1):
-            return message.continue_propagation()
     try:
         if await client.get_chat_member(channel, message.from_user.id):
             users_in_channel[message.from_user.id] = dt.datetime.now()
