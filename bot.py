@@ -455,7 +455,7 @@ async def send_manga_chapter(client: Client, chapter, chat_id):
             available_len = 60 - static_len
 
             new_manga_name = cut_till_61(chapter.manga.name, available_len)
-            ch_name = ch_name.replace(chapter.manga.name, new_manga_name)
+            ch_name = ch_name.replace(chapter.manga.name, new_manga_name).strip()
         else:
             ch_num = chapter.name.replace("Chapter", "Ch").replace("chapter", "Ch")
             ch_name = clean(f'{ch_num} - {clean(chapter.manga.name, 50)}', 61)
