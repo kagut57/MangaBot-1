@@ -449,7 +449,7 @@ async def send_manga_chapter(client: Client, chapter, chat_id):
 
             ch_name = env_vars["FNAME"].replace("{chap_num}", str(chap_num)).replace("{chap_name}", chapter.manga.name)
             
-            success_caption = f"<blockquote>{ch_name}.pdf</blockquote>"
+            success_caption = f"<b><blockquote>{ch_name}.pdf</blockquote></b>"
 
             static_len = len(ch_name) - len(chapter.manga.name)
             available_len = 61 - static_len
