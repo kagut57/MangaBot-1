@@ -8,9 +8,9 @@ from plugins.client import MangaClient, MangaCard, MangaChapter
 
 
 class MangaHasuClient(MangaClient):
-    base_url = urlparse("https://mangahasu.se/")
-    search_url = urljoin(base_url.geturl(), "search/autosearch")
-    search_param = 'key'
+    base_url = urlparse("https://mangahasu.me/")
+    search_url = urljoin(base_url.geturl(), "advanced-search.html")
+    search_param = 'keyword'
 
     pre_headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:97.0) Gecko/20100101 Firefox/97.0'
@@ -22,12 +22,16 @@ class MangaHasuClient(MangaClient):
     def mangas_from_page(self, page: bytes):
         bs = BeautifulSoup(page, "html.parser")
 
-        cards = bs.find_all("li")[:-1]
-
-        mangas = [card.a for card in cards]
-        names = [manga.findNext('p', {'class': 'name'}).text.strip() for manga in mangas]
+        mangas = bs.find_all("a", class_="name-manga")
+        img_tags = bs.find_all('div', class_='wrapper_imgage')
+        
+        names = [manga.text.strip() for manga in mangas]
         url = [manga.get('href').strip() for manga in mangas]
-        images = [manga.find("img").get('src').strip() for manga in mangas]
+        images = []
+        for img_tag in img_tags:
+            img_src = img_tag.find('img')['src']
+            #new_img_src = re.sub(r'https://img\.mangahasu\.se/\dimg/', 'https://2.bp.blogspot.com/', img_src)
+            images.append(img_src)
 
         mangas = [MangaCard(self, *tup) for tup in zip(names, url, images)]
 
@@ -36,7 +40,7 @@ class MangaHasuClient(MangaClient):
     def chapters_from_page(self, page: bytes, manga: MangaCard = None):
         bs = BeautifulSoup(page, "html.parser")
 
-        div = bs.find("div", {"class": "list-chapter"})
+        div = bs.find("div", {"class": "list-chapter scrollbar-primary"})
 
         lis = div.findAll('tr')[1:]
         a_elems = [li.find('a') for li in lis]
@@ -70,24 +74,25 @@ class MangaHasuClient(MangaClient):
         return urls
 
     async def pictures_from_chapters(self, content: bytes, response=None):
-        bs = BeautifulSoup(content, "html.parser")
-
-        container = bs.find("div", {"class": "img"})
-
-        images = container.find_all("img")
-
-        images_url = [quote(img.get('src'), safe=':/%') for img in images]
+        soup = BeautifulSoup(content, "html.parser")
+        
+        img_div = soup.find('div', class_='img')
+        
+        img_tags = img_div.find_all('img')
+        
+        images_url = [img['src'] for img in img_tags]
 
         return images_url
 
     async def search(self, query: str = "", page: int = 1) -> List[MangaCard]:
         request_url = self.search_url
+        query = query.strip()
+        query = query.replace(" ", "+").replace("’", "+")
 
-        data = {
-            self.search_param: query
-        }
+        if query:
+            request_url = f'{request_url}?{self.search_param}={query}'
 
-        content = await self.get_url(request_url, data=data, method='post')
+        content = await self.get_url(request_url)
 
         return self.mangas_from_page(content)
 
@@ -112,14 +117,22 @@ class MangaHasuClient(MangaClient):
     async def contains_url(self, url: str):
         return url.startswith(self.base_url.geturl())
 
-    async def check_updated_urls(self, last_chapters: List[LastChapter]):
+    async def check_updated_urls(self, last_chapters):
 
         content = await self.get_url(self.base_url.geturl())
 
         updates = self.updates_from_page(content)
 
-        updated = [lc.url for lc in last_chapters if updates.get(lc.url) and updates.get(lc.url) != lc.chapter_url]
-        not_updated = [lc.url for lc in last_chapters if not updates.get(lc.url)
-                       or updates.get(lc.url) == lc.chapter_url]
+        updated = [lc["url"] for lc in last_chapters if updates.get(lc["url"]) and updates.get(lc["url"]) != lc["chapter_url"]]
+        not_updated = [lc["url"] for lc in last_chapters if not updates.get(lc["url"])
+                       or updates.get(lc["url"]) == lc["chapter_url"]]
 
         return updated, not_updated
+
+    async def get_cover(self, manga_card: MangaCard, *args, **kwargs):
+        headers = {**self.pre_headers, 'Referer': manga_card.url}
+        return await super(MangaHasuClient, self).get_cover(manga_card, *args, headers=headers, **kwargs)
+
+    async def get_picture(self, manga_chapter: MangaChapter, url, *args, **kwargs):
+        headers = {**self.pre_headers, 'Referer': manga_chapter.url}
+        return await super(MangaHasuClient, self).get_picture(manga_chapter, url, *args, headers=headers, **kwargs)
