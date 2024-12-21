@@ -1,12 +1,13 @@
 import os
 import subprocess
 import logging
-import config
+from config import env_vars
+
 LOGGER = logging.getLogger(__name__)
 
 def gitpull():
-    UPSTREAM_BRANCH = config.UPSTREAM_BRANCH
-    UPSTREAM_REPO = config.UPSTREAM_BRANCH
+    UPSTREAM_BRANCH = env_vars.UPSTREAM_BRANCH
+    UPSTREAM_REPO = env_vars.UPSTREAM_BRANCH
     try:
         if len(UPSTREAM_REPO) == 0:
             raise TypeError("UPSTREAM_REPO is empty")
