@@ -82,8 +82,8 @@ class AsuraScansClient(MangaClient):
                         pages = json.loads(unescaped_json)
                         urls = [page["url"] for page in pages]
                         return urls
-            except json.JSONDecodeError as e:
-            return []
+                    except json.JSONDecodeError as e:
+                        return []
     async def search(self, query: str = "", page: int = 1) -> List[MangaCard]:
         query = query.strip()
         query = query.replace(" ", "+").replace("’", "+")
