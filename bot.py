@@ -441,6 +441,7 @@ async def send_manga_chapter(client: Client, chapter, chat_id):
     chapter_file = chapter_file or ChapterFile(url=chapter.url)
 
     success_caption = None
+    ch_name = None
 
     try:
         if env_vars["FNAME"]:
