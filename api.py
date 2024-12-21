@@ -2,7 +2,7 @@ from aiohttp import web
 
 
 async def root_handler(request):
-    return web.json_response({"status": "Online"})
+    return web.json_response({"status": "Made With ♡ By @cant_think_1"})
 
 async def run_web_server():
     app = web.Application()
