@@ -7,7 +7,7 @@ LOGGER = logging.getLogger(__name__)
 
 def gitpull():
     UPSTREAM_BRANCH = env_vars["UPSTREAM_BRANCH"]
-    UPSTREAM_REPO = env_vars["UPSTREAM_BRANCH"]
+    UPSTREAM_REPO = env_vars["UPSTREAM_REPO"]
     try:
         if len(UPSTREAM_REPO) == 0:
             raise TypeError("UPSTREAM_REPO is empty")
