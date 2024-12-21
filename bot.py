@@ -455,12 +455,12 @@ async def send_manga_chapter(client: Client, chapter, chat_id):
             truncated_manga_name = truncate_filename(chapter.manga.name, available_len)
             ch_name = env_vars["FNAME"].replace("{chap_num}", str(chap_num)).replace("{chap_name}", truncated_manga_name)
             
-            success_caption = f"<blockquote>{full_ch_name}.pdf</blockquote>"
+            success_caption = f"<blockquote><b>{full_ch_name}.pdf</b></blockquote>"
         else:
             ch_num = chapter.name.replace("Chapter", "Ch").replace("chapter", "Ch")
             full_name = f'{ch_num} - {chapter.manga.name}'
             ch_name = f'{ch_num} - {truncate_filename(chapter.manga.name, 50)}'
-            success_caption = f"<blockquote>{full_name}.pdf</blockquote>"
+            success_caption = f"<blockquote><b>{full_name}.pdf</b></blockquote>"
             
     except Exception as e:
         logger.exception(f'Error while cutting the name: {e}')
