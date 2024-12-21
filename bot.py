@@ -136,7 +136,7 @@ async def on_chat_or_channel_message(client: Client, message: Message):
 async def on_private_message(client: Client, message: Message):
     channel = env_vars.get('CHANNEL')
     user_id = message.from_user.id
-    SUDOS = env_vars.get('SUDOS', [])
+    SUDOS = env_vars['SUDOS']
     if SUDOS and user_id not in SUDOS:
         return message.stop_propagation()
     if not channel:
