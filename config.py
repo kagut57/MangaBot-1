@@ -18,7 +18,11 @@ env_vars = {
     # Thumb Path (Optional)
     "THUMB": "",
     # Add authorized user IDs, separated by commas in a list
-    "SUDOS": [5591954930]
+    "SUDOS": [5591954930],
+    #Your repo branch
+    "UPSTREAM_BRANCH": "master",
+    # Your repo link
+    "UPSTREAM_REPO": "https://github.com/kagut57/MangaBot-1/"
 }
 
 # Determine the database URL (default to SQLite if not provided)
