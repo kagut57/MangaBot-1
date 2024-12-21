@@ -109,7 +109,7 @@ class MangaDexClient(MangaClient):
 
         return self.mangas_from_page(content)
 
-    async def get_chapters(self, manga_card: MangaCard, page: int = 1, count: int = 10) -> List[MangaChapter]:
+    async def get_chapters(self, manga_card: MangaCard, page: int = 1, count: int = 20) -> List[MangaChapter]:
 
         request_url = f'{manga_card.url}' \
                       f'&limit={count}&offset={(page - 1) * count}&includes[' \
@@ -134,7 +134,7 @@ class MangaDexClient(MangaClient):
 
     async def contains_url(self, url: str):
         return url.startswith(self.base_url.geturl()) and url.endswith(self.language_param)
-
+        
     async def check_updated_urls(self, last_chapters: List[LastChapter]):
 
         content = await self.get_url(f'{self.latest_uploads}&{self.language_param}')
