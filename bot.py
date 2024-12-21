@@ -451,7 +451,7 @@ async def send_manga_chapter(client: Client, chapter, chat_id):
             full_ch_name = env_vars["FNAME"].replace("{chap_num}", str(chap_num)).replace("{chap_name}", chapter.manga.name)
             
             template_without_manga = env_vars["FNAME"].replace("{chap_num}", str(chap_num)).replace("{chap_name}", "")
-            available_len = 50 - len(template_without_manga)
+            available_len = 52 - len(template_without_manga)
             truncated_manga_name = truncate_filename(chapter.manga.name, available_len)
             ch_name = env_vars["FNAME"].replace("{chap_num}", str(chap_num)).replace("{chap_name}", truncated_manga_name)
             
