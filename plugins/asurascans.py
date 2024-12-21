@@ -45,7 +45,7 @@ class AsuraScansClient(MangaClient):
         lists = container.find_all("a")
 
         links = [f'{self.base_url.geturl()}series/{list.get("href")}' for list in lists]
-        texts = [list.find("h3", class_=True, span=True).text.strip() for list in lists]
+        texts = [list.find("h3", class_="text-sm text-white font-medium flex flex-row").text.strip() for list in lists]
 
         return list(map(lambda x: MangaChapter(self, x[0], x[1], manga, []), zip(texts, links)))
 
