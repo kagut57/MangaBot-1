@@ -118,8 +118,7 @@ class AsuraScansClient(MangaClient):
     async def contains_url(self, url: str):
         return url.startswith(self.base_url.geturl())
 
-     async def check_updated_urls(self, last_chapters: List[LastChapter]):
-
+    async def check_updated_urls(self, last_chapters: List[LastChapter]):
         content = await self.get_url(self.updates_url)
 
         updates = self.updates_from_page(content)
