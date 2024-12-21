@@ -405,7 +405,7 @@ async def chapter_click(client, data, chat_id):
     await pdf_queue.put(chapters[data], int(chat_id))
     logger.debug(f"Put chapter {chapters[data].name} to queue for user {chat_id} - queue size: {pdf_queue.qsize()}")
 
-def cut_till_61(text, max_length):
+def truncate_filename(text, max_length):
     return text[:max_length] if len(text) > max_length else text
 
 async def send_manga_chapter(client: Client, chapter, chat_id):
@@ -446,20 +446,27 @@ async def send_manga_chapter(client: Client, chapter, chat_id):
         if env_vars["FNAME"]:
             chap_num_match = re.search(r"Vol (\d+(?:\.\d+)?) Chapter (\d+(?:\.\d+)?)", chapter.name)
             chap_num = chap_num_match.group(2) if chap_num_match else re.search(r"(\d+(?:\.\d+)?)", chapter.name).group(1)
-
-            ch_name = env_vars["FNAME"].replace("{chap_num}", str(chap_num)).replace("{chap_name}", chapter.manga.name)
             
-            success_caption = f"<b><blockquote>{ch_name}.pdf</blockquote></b>"
-
-            static_len = len(ch_name) - len(chapter.manga.name)
-            available_len = 50 - static_len
-
-            new_manga_name = cut_till_61(chapter.manga.name, available_len)
-            ch_name = ch_name.replace(chapter.manga.name, new_manga_name).strip()
+            full_ch_name = env_vars["FNAME"].replace("{chap_num}", str(chap_num)).replace("{chap_name}", chapter.manga.name)
+            
+            template_without_manga = env_vars["FNAME"].replace("{chap_num}", str(chap_num)).replace("{chap_name}", "")
+            available_len = 60 - len(template_without_manga)
+            truncated_manga_name = truncate_filename(chapter.manga.name, available_len)
+            truncated_ch_name = env_vars["FNAME"].replace("{chap_num}", str(chap_num)).replace("{chap_name}", truncated_manga_name)
+            
+            success_caption = (
+                f"<b>{full_ch_name}</b>\n"
+                f"<blockquote>File: {truncated_ch_name}.pdf</blockquote>"
+            )
         else:
             ch_num = chapter.name.replace("Chapter", "Ch").replace("chapter", "Ch")
-            ch_name = clean(f'{ch_num} - {clean(chapter.manga.name, 50)}', 61)
-            success_caption = f"<blockquote>{ch_name}.pdf</blockquote>"
+            full_name = f'{ch_num} - {chapter.manga.name}'
+            truncated_name = f'{ch_num} - {truncate_filename(chapter.manga.name, 50)}'
+            success_caption = (
+                f"<b>{full_name}</b>\n"
+                f"<blockquote>File: {truncated_name}.pdf</blockquote>"
+            )
+            
     except Exception as e:
         logger.exception(f'Error while cutting the name: {e}')
 
