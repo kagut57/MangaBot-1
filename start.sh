@@ -1,2 +1,2 @@
-echo "Started..."
-gunicorn app:app & python3 main.py
+echo "Running 🏃‍➡️🏃‍➡️🏃‍➡️"
+python3 update.py & python3 main.py
