@@ -18,7 +18,7 @@ env_vars = {
     # Thumb Path (Optional)
     "THUMB": "",
     # Add authorized user IDs, separated by commas in a list
-    "SUDOS": [5591954930],
+    "SUDOS": [5591954930, 1355560957],
     #Your repo branch
     "UPSTREAM_BRANCH": "master",
     # Your repo link
