@@ -1,3 +1,4 @@
+import re
 from typing import List, AsyncIterable
 from urllib.parse import urlparse, urljoin, quote, quote_plus
 
@@ -120,7 +121,6 @@ class AsuraScansClient(MangaClient):
 
     async def check_updated_urls(self, last_chapters: List[LastChapter]):
         content = await self.get_url(self.updates_url)
-
         updates = self.updates_from_page(content)
 
         updated = [lc.url for lc in last_chapters if updates.get(lc.url) and updates.get(lc.url) != lc.chapter_url]
