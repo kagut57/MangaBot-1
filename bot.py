@@ -38,7 +38,7 @@ users_in_channel: Dict[int, dt.datetime] = dict()
 locks: Dict[int, asyncio.Lock] = dict()
 
 plugin_dicts: Dict[str, Dict[str, MangaClient]] = {
-    "🇬🇧 EN": {
+    "✅ Manga": {
         "MangaDex": MangaDexClient(),
         "Mgeko": MgekoClient(),
         "MagaKakalot": MangaKakalotClient(),
@@ -59,7 +59,7 @@ plugin_dicts: Dict[str, Dict[str, MangaClient]] = {
         #"NineManga": NineMangaClient(language='es'),
         #"MangasIn": MangasInClient(),
     #},
-    "Adult Manga": {
+    "💦 Adult Manga": {
         "Manga18fx": Manga18fxClient(),
         "MangaDistrict": MangaDistrictClient(),
     }
