@@ -29,7 +29,7 @@ env_vars = {
 dbname = (
     env_vars.get("DATABASE_URL_PRIMARY") 
     or env_vars.get("DATABASE_URL") 
-    or "sqlite:///test.db"
+    or "sqlite:///mangabot.db"
 )
 
 # Ensure compatibility with SQLAlchemy if using older Postgres URL formats
