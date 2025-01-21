@@ -49,16 +49,17 @@ plugin_dicts: Dict[str, Dict[str, MangaClient]] = {
         "AsuraScans": AsuraScansClient(),
         "MangaHasu": MangaHasuClient(),        
         "LikeManga": LikeMangaClient(),
+        "OmegaScans": OmgeaScansClient(),
           },
-    "🇪🇸 ES": {
-        "MangaDex": MangaDexClient(language=("es-la", "es")),
-        "ManhuaKo": ManhuaKoClient(),
-        "TMO": TMOClient(),
-        "Mangatigre": MangatigreClient(),
-        "NineManga": NineMangaClient(language='es'),
-        "MangasIn": MangasInClient(),
-    },
-    "🔞 18+": {
+    #"🇪🇸 ES": {
+        #"MangaDex": MangaDexClient(language=("es-la", "es")),
+        #"ManhuaKo": ManhuaKoClient(),
+        #"TMO": TMOClient(),
+        #"Mangatigre": MangatigreClient(),
+        #"NineManga": NineMangaClient(language='es'),
+        #"MangasIn": MangasInClient(),
+    #},
+    "Adult Manga": {
         "Manga18fx": Manga18fxClient(),
         "MangaDistrict": MangaDistrictClient(),
     }
