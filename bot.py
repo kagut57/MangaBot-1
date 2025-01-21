@@ -278,7 +278,7 @@ async def on_message(client, message: Message):
     language_query[f"lang_None_{hash(message.text)}"] = (None, message.text)
     for language in plugin_dicts.keys():
         language_query[f"lang_{language}_{hash(message.text)}"] = (language, message.text)
-    await bot.send_message(message.chat.id, "Select Manga Type.", reply_markup=InlineKeyboardMarkup(
+    await bot.send_message(message.chat.id, "Select Manga Type For The Given Search.", reply_markup=InlineKeyboardMarkup(
         split_list([InlineKeyboardButton(language, callback_data=f"lang_{language}_{hash(message.text)}")
                     for language in plugin_dicts.keys()])
     ))
