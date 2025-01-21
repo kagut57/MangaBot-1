@@ -7,9 +7,9 @@ env_vars = {
     "BOT_TOKEN": "6505447429:AAFZ369_T7_2vB0BoEB6BEwYGZwiuCvkCaM",
     # Get from tembo.io
     "DATABASE_URL_PRIMARY": "",
-    # Logs channel username without @
+    # Logs channel username without @ or channel-id
     "CACHE_CHANNEL": "",
-    # Force subs channel username without @
+    # Force subs channel username without @ or channel-id
     "CHANNEL": "",
     # {chap_num}: Chapter Number
     # {chap_name}: Manga Name
